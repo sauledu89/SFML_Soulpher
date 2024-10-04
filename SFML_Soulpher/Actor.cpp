@@ -25,4 +25,3 @@ void Actor::render(Window& window)
         window.draw(*components[i].dynamic_pointer_cast<ShapeFactory>()->getShape());
     }
 }
-

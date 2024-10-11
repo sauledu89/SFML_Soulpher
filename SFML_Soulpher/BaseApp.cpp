@@ -9,10 +9,10 @@
  */
 
 std::vector<sf::Vector2f> points = {
-    sf::Vector2f(600.0f, 100.0f), // Punto 1
-    sf::Vector2f(700.0f, 100.0f), // Punto 2
-    sf::Vector2f(700.0f, 200.0f), // Punto 3
-    sf::Vector2f(600.0f, 200.0f)  // Punto 4
+    sf::Vector2f(250.0f, 100.0f), // Punto 1
+    sf::Vector2f(500.0f, 100.0f), // Punto 2
+    sf::Vector2f(500.0f, 200.0f), // Punto 3
+    sf::Vector2f(250.0f, 200.0f)  // Punto 4
 };
 
 int currentTarget = 0;          // Índice del objetivo actual en el vector de puntos.
@@ -58,7 +58,7 @@ int BaseApp::run()
 bool BaseApp::initialize()
 {
     // Crear la ventana principal con las dimensiones especificadas y un título.
-    m_window = new Window(800, 600, "SFML-MAGIC-009");
+    m_window = new Window(800, 600, "SFML_Soulpher");
     if (m_window == nullptr)
     {
         ERROR("BaseApp", "initialize", "Error on window creation, var is null");
@@ -72,7 +72,7 @@ bool BaseApp::initialize()
         // Crear un círculo con el componente ShapeFactory.
         Circle->getComponent<ShapeFactory>()->createShape(ShapeType::CIRCLE);
         Circle->getComponent<ShapeFactory>()->setPosition(600.0f, 100.0f);  // Posicionar en el primer punto.
-        Circle->getComponent<ShapeFactory>()->getShape()->setFillColor(sf::Color::Blue);  // Establecer el color del círculo.
+        Circle->getComponent<ShapeFactory>()->getShape()->setFillColor(sf::Color::Yellow);  // Establecer el color del círculo.
     }
 
     // Crear y configurar el actor Triangle.
@@ -80,8 +80,8 @@ bool BaseApp::initialize()
     if (!Triangle.isNull())
     {
         Triangle->getComponent<ShapeFactory>()->createShape(ShapeType::TRIANGLE);  // Crear un triángulo.
-        Triangle->getComponent<ShapeFactory>()->setPosition(0.0f, 0.0f);  // Posicionarlo en la esquina superior izquierda.
-        Triangle->getComponent<ShapeFactory>()->getShape()->setFillColor(sf::Color::White);  // Establecer el color del triángulo.
+        Triangle->getComponent<ShapeFactory>()->setPosition(350.0f, 120.0f);  // Posicionarlo
+        Triangle->getComponent<ShapeFactory>()->getShape()->setFillColor(sf::Color::Cyan);  // Establecer el color del triángulo.
     }
 
     return true;  // Inicialización exitosa.
@@ -109,8 +109,8 @@ void BaseApp::update()
         float mouseDistance = std::sqrt((mousePosF.x - currentPosition.x) * (mousePosF.x - currentPosition.x) +
             (mousePosF.y - currentPosition.y) * (mousePosF.y - currentPosition.y));
 
-        // Si el ratón está a menos de 200 unidades de distancia, activar el seguimiento.
-        if (mouseDistance < 200.0f)
+        // Si el ratón está a menos de 300 unidades de distancia, activar el seguimiento.
+        if (mouseDistance < 300.0f)
         {
             isFollowingMouse = true;
             Circle->getComponent<ShapeFactory>()->Seek(mousePosF, 200.0f, deltaTime.asSeconds(), 10.0f);

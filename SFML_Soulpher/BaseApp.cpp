@@ -1,6 +1,7 @@
 #include "Actor.h"
 #include "BaseApp.h"
 
+
 /*
   Definición de puntos de movimiento para el actor Circle.
   Estos puntos representan las posiciones a las que el actor se moverá secuencialmente en el espacio 2D.

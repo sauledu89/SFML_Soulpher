@@ -63,6 +63,7 @@ void ShapeFactory::setPosition(float x, float y)
     m_shape->setPosition(x, y);  // Establecer la posición usando coordenadas flotantes.
 }
 
+
 /*
   Sobrecarga de setPosition que acepta un vector `sf::Vector2f`.
   - Permite establecer la posición de la forma utilizando un vector en lugar de coordenadas individuales.
@@ -73,6 +74,25 @@ void ShapeFactory::setPosition(const sf::Vector2f& position)
     m_shape->setPosition(position);  // Establecer la posición usando un vector.
 }
 
+// Establece la rotación de la forma.
+// @param angle Ángulo de rotación en grados.
+void ShapeFactory::setRotation(float angle)
+{
+    if (m_shape)
+    {
+        m_shape->setRotation(angle);
+    }
+}
+
+// Establece la escala de la forma usando un vector 2D (X e Y).
+// @param scl Vector que contiene la escala para los ejes X e Y.
+void ShapeFactory::setScale(const sf::Vector2f& scl)
+{
+    if (m_shape)
+    {
+        m_shape->setScale(scl);
+    }
+}
 /*
   Función setFillColor
   - Cambia el color de relleno de la forma.

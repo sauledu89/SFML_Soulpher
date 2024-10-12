@@ -91,6 +91,15 @@ public:
       - Devuelve un puntero a la forma (sf::Shape).
       Esta función permite acceder a la forma para modificar propiedades como posición, color y transformaciones.
      */
+
+    // Establece la escala de la forma.
+    // @param scl Vector con los valores de escala en X e Y.
+    void setScale(const sf::Vector2f& scl);
+
+    // Establece la rotación de la forma en grados.
+    // @param angle Ángulo de rotación en grados.
+    void setRotation(float angle);
+
     sf::Shape* getShape()
     {
         return m_shape;     

@@ -1,172 +1,175 @@
-#include "Actor.h"
 #include "BaseApp.h"
 
-
 /*
-  Definición de puntos de movimiento para el actor Circle.
-  Estos puntos representan las posiciones a las que el actor se moverá secuencialmente en el espacio 2D.
-  En un contexto de gráficas computacionales 3D, los puntos podrían utilizarse para definir trayectorias de movimiento en un espacio tridimensional.
-  Por ejemplo, podrían ser utilizados para patrullas de enemigos en un entorno 3D.
- */
-
-std::vector<sf::Vector2f> points = {
-    sf::Vector2f(250.0f, 100.0f), // Punto 1
-    sf::Vector2f(500.0f, 100.0f), // Punto 2
-    sf::Vector2f(500.0f, 200.0f), // Punto 3
-    sf::Vector2f(250.0f, 200.0f)  // Punto 4
-};
-
-int currentTarget = 0;          // Índice del objetivo actual en el vector de puntos.
-float actorSpeed = 100.0f;      // Velocidad del actor en unidades por segundo.
-float range = 5.0f;             // Rango de proximidad para considerar que el actor ha alcanzado un punto.
-
-bool isFollowingMouse = false;  // Bandera que indica si el actor está siguiendo el ratón.
-
-/*
-  Función run
-  - Ciclo principal de la aplicación.
-  - Inicializa los recursos, maneja los eventos y actualiza el renderizado en cada iteración.
-  Este ciclo es equivalente al *Game Loop* en gráficos 3D, donde se controlan el estado de los objetos, la lógica de movimiento, y el renderizado de la escena.
- */
-int BaseApp::run()
-{
-    if (!initialize())
-    {
-        ERROR("BaseApp", "run", "Initializes result on a false statement, check method validations.");
+   Ejecución de la aplicación. 
+   Este método mantiene la aplicación en un bucle continuo, manejando eventos,
+   Llama constantemente a los métodos update y render, hasta que se cierre la ventaana
+   int, Código de salida (0 si la ejecución fue exitosa).
+*/
+int BaseApp::run() {
+    if (!initialize()) {
+        ERROR("BaseApp", "run", "Initialization failed. Check method validations.");
     }
-
-    // Bucle principal de la aplicación.
-    while (m_window->isOpen())
-    {
-        m_window->handleEvents();     // Capturar y manejar eventos de la ventana.
-        deltaTime = Clock.restart();  // Calcular el tiempo delta para regular las velocidades de movimiento.
-
-        update();  // Actualizar el estado de los actores y la lógica del juego.
-        render();  // Dibujar la escena en la ventana.
+    while (m_window->isOpen()) {
+        m_window->handleEvents();
+        update();
+        render();
     }
-
-    cleanup();  // Liberar los recursos utilizados.
-
-    return 0;  // Indicar que el programa finalizó correctamente.
+    cleanup();
+    return 0;
 }
 
-/*
-  Función initialize
-  - Inicializa la ventana y los actores utilizados en la aplicación.
-  En aplicaciones gráficas más complejas, esta función podría ser utilizada para cargar modelos 3D,
-  texturas o inicializar sistemas de iluminación y cámaras.
- */
-bool BaseApp::initialize()
-{
-    // Crear la ventana principal con las dimensiones especificadas y un título.
-    m_window = new Window(800, 600, "SFML_Soulpher");
-    if (m_window == nullptr)
-    {
-        ERROR("BaseApp", "initialize", "Error on window creation, var is null");
+/* 
+   Inicializa los recursos necesarios, como actores y texturas.
+   true para inicialización exitosa, false si ocurrió un error.
+*/
+
+bool BaseApp::initialize() {
+    // Crear la ventana principal.
+    m_window = new Window(800, 600, "SFML_SOULPHER");
+    if (!m_window) {
+        ERROR("BaseApp", "initialize", "Error al crear la ventana.");
         return false;
     }
 
-    // Crear y configurar el actor Circle.
+    // Cargar la textura del circuito.
+    if (!texture.loadFromFile("C:/Users/chalu/OneDrive/Documentos/GitHub/SFML_Soulpher/bin/MarioKart sprite-png/Circuit.png")) {
+        std::cout << "Error al cargar la textura del circuito" << std::endl;
+        return false;
+    }
+
+    // Crear y configurar el Track (pista).
+    Track = EngineUtilities::MakeShared<Actor>("Track");
+    if (!Track.isNull()) {
+        auto trackTransform = Track->getComponent<Transform>();
+        Track->getComponent<ShapeFactory>()->createShape(ShapeType::RECTANGLE);
+        trackTransform->setPosition(sf::Vector2f(0.0f, 0.0f));
+        trackTransform->setRotation(0.0f);
+        trackTransform->setScale(sf::Vector2f(11.0f, 12.0f));
+        Track->getComponent<ShapeFactory>()->getShape()->setTexture(&texture);
+    }
+
+    // Función para cargar y asignar texturas a personajes.
+    auto loadCharacter = [this](sf::Texture& texture, const std::string& path, const std::string& name) {
+        if (!texture.loadFromFile(path)) {
+            std::cout << "Error al cargar la textura de " << name << std::endl;
+            return false;
+        }
+        return true;
+        };
+
+    // Personaje y su ruta de textura.
+    std::vector<std::pair<sf::Texture*, std::string>> characters = {
+        {&Mario, "tile000.png"},
+    };
+
+    // Cargar texturas de los personajes.
+    for (const auto& [texture, path] : characters) {
+        if (!loadCharacter(*texture, "C:/Users/chalu/OneDrive/Documentos/GitHub/SFML_Soulpher/bin/MarioKart sprite-png/" + path, path)) {
+            return false;
+        }
+    }
+
+    // Crear el actor Circle (ejemplo con Mario).
     Circle = EngineUtilities::MakeShared<Actor>("Circle");
-    if (!Circle.isNull())
-    {
-        // Crear un círculo con el componente ShapeFactory.
+    if (!Circle.isNull()) {
         Circle->getComponent<ShapeFactory>()->createShape(ShapeType::CIRCLE);
-        Circle->getComponent<ShapeFactory>()->setPosition(600.0f, 100.0f);  // Posicionar en el primer punto.
-        Circle->getComponent<ShapeFactory>()->getShape()->setFillColor(sf::Color::Yellow);  // Establecer el color del círculo.
+        auto circleTransform = Circle->getComponent<Transform>();
+        circleTransform->setPosition(sf::Vector2f(720.0f, 350.0f)); // 720, 350 Para iniciar en la línea de salida.
+        circleTransform->setRotation(0.0f);
+        circleTransform->setScale(sf::Vector2f(1.0f, 1.0f));
+        Circle->getComponent<ShapeFactory>()->getShape()->setTexture(&Mario);
     }
 
-    // Crear y configurar el actor Triangle.
-    Triangle = EngineUtilities::MakeShared<Actor>("Triangle");
-    if (!Triangle.isNull())
-    {
-        Triangle->getComponent<ShapeFactory>()->createShape(ShapeType::TRIANGLE);  // Crear un triángulo.
-        Triangle->getComponent<ShapeFactory>()->setPosition(350.0f, 120.0f);  // Posicionarlo
-        Triangle->getComponent<ShapeFactory>()->getShape()->setFillColor(sf::Color::Cyan);  // Establecer el color del triángulo.
-    }
-
-    return true;  // Inicialización exitosa.
+    return true;
 }
 
-/*
-  Función update
-  - Lógica de actualización de los actores en cada frame.
-  - Controla el seguimiento del ratón y el movimiento del actor entre puntos.
-  En un entorno 3D, esta función podría ser utilizada para actualizar la posición de las cámaras, manejar interacciones de personajes y simular
-  físicas complejas.
- */
-void BaseApp::update()
-{
-    // Obtener la posición actual del ratón.
+/* 
+   Actualiza la lógica del juego cada frame.
+   Actualización de los actores, posición del ratón y movimiento del círculo.
+*/
+void BaseApp::update() {
+    m_window->update();
+
     sf::Vector2i mousePosition = sf::Mouse::getPosition(*m_window->getWindow());
     sf::Vector2f mousePosF(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y));
 
-    if (!Circle.isNull())
-    {
-        // Obtener la posición actual del círculo.
-        sf::Vector2f currentPosition = Circle->getComponent<ShapeFactory>()->getShape()->getPosition();
+    if (!Track.isNull()) Track->update(m_window->deltaTime.asSeconds());
+    if (!Triangle.isNull()) Triangle->update(m_window->deltaTime.asSeconds());
 
-        // Calcular la distancia entre el ratón y el círculo.
-        float mouseDistance = std::sqrt((mousePosF.x - currentPosition.x) * (mousePosF.x - currentPosition.x) +
-            (mousePosF.y - currentPosition.y) * (mousePosF.y - currentPosition.y));
+    if (!Circle.isNull()) {
+        Circle->update(m_window->deltaTime.asSeconds());
 
-        // Si el ratón está a menos de 300 unidades de distancia, activar el seguimiento.
-        if (mouseDistance < 300.0f)
-        {
+        sf::Vector2f currentPosition = Circle->getComponent<Transform>()->getPosition();
+        float mouseDistance = std::sqrt(
+            std::pow(mousePosF.x - currentPosition.x, 2) + std::pow(mousePosF.y - currentPosition.y, 2)
+        );
+
+        if (mouseDistance < 100.0f) {
             isFollowingMouse = true;
-            Circle->getComponent<ShapeFactory>()->Seek(mousePosF, 200.0f, deltaTime.asSeconds(), 10.0f);
+            sf::Vector2f newPos = currentPosition + (mousePosF - currentPosition) * m_window->deltaTime.asSeconds();
+            Circle->getComponent<Transform>()->setPosition(newPos);
         }
-        else
-        {
+        else {
             isFollowingMouse = false;
-        }
-
-        // Si no está siguiendo al ratón, mover el actor entre los puntos predefinidos.
-        if (!isFollowingMouse)
-        {
-            // Calcular la dirección hacia el siguiente punto objetivo.
-            sf::Vector2f direction = points[currentTarget] - currentPosition;
-
-            // Calcular la distancia al objetivo actual.
-            float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-
-            // Si la distancia al punto es menor al rango, avanzar al siguiente objetivo.
-            if (distance < range)
-            {
-                currentTarget = (currentTarget + 1) % points.size();  // Pasar al siguiente punto.
-            }
-
-            // Mover el círculo hacia el siguiente objetivo.
-            Circle->getComponent<ShapeFactory>()->Seek(points[currentTarget], actorSpeed, deltaTime.asSeconds(), range);
+            updateMovement(m_window->deltaTime.asSeconds(), Circle);
         }
     }
 }
 
-/*
-  Función render
-  - Dibuja los actores en la ventana.
-  - Se encarga de mostrar el estado actual de la escena en cada ciclo de renderizado.
-  En un entorno de gráficas computacionales 3D, esta función podría ser utilizada para dibujar modelos complejos,
-  aplicar efectos de iluminación y realizar cálculos de sombreado en tiempo real.
- */
-void BaseApp::render()
-{
-    m_window->clear();  // Limpiar el contenido previo de la ventana.
 
-    Circle->render(*m_window);  // Dibujar el actor Circle.
-    Triangle->render(*m_window);  // Dibujar el actor Triangle.
+   // Renderiza los actores y la interfaz gráfica de ImGui.
+ 
+void BaseApp::render() {
+    m_window->clear();
 
-    m_window->display();  // Mostrar el contenido en la pantalla.
+    if (!Track.isNull()) Track->render(*m_window);
+    if (!Circle.isNull()) Circle->render(*m_window);
+    if (!Triangle.isNull()) Triangle->render(*m_window);
+    
+    //Texto en el recuadro de interfaz de IMGUI
+
+    ImGui::Begin("MARIOKART MAP");
+    ImGui::Text("PLAYER 1 --> MARIO");
+    ImGui::End();
+
+    m_window->render();
+    m_window->display();
 }
 
 /*
-  Función cleanup
-  - Libera los recursos de la ventana y destruye los actores.
-  En un entorno 3D, esta función sería utilizada para liberar modelos, texturas y buffers de la GPU, evitando
-  fugas de memoria y garantizando una correcta liberación de recursos.
- */
-void BaseApp::cleanup()
-{
-    m_window->destroy();  // Destruir la ventana.
-    delete m_window;      // Eliminar la instancia de la ventana.
+   Cleanup para liberar los recursos utilizados por la aplicación.
+   Destruir la ventana y libera la memoria asignada.
+
+*/
+void BaseApp::cleanup() {
+    m_window->destroy();
+    delete m_window;
+}
+
+/*
+   Controla el movimiento del círculo entre puntos predefinidos.
+   Si el círculo no está siguiendo al ratón, se mueve automáticamente entre los  waypoints.
+*/
+void BaseApp::updateMovement(float deltaTime, EngineUtilities::TSharedPointer<Actor> circle) {
+    if (circle.isNull()) return;
+
+    auto transform = circle->getComponent<Transform>();
+    sf::Vector2f currentPos = transform->getPosition();
+    sf::Vector2f targetPos = waypoints[currentWaypoint];
+
+    sf::Vector2f direction = targetPos - currentPos;
+    float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+    if (distance > 0.0f) direction /= distance;
+
+    float speed = 150.0f;  // Velocidad del círculo.
+    sf::Vector2f newPos = currentPos + direction * speed * deltaTime;
+
+    if (distance < 10.0f) {
+        currentWaypoint = (currentWaypoint + 1) % waypoints.size();
+    }
+    else {
+        transform->setPosition(newPos);
+    }
 }

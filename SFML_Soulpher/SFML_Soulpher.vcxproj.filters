@@ -16,6 +16,9 @@
     <Filter Include="Archivos de encabezado\Memory">
       <UniqueIdentifier>{6422a8d6-1f33-47a5-8d6a-6e38d2ef9809}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de encabezado\IMGUI">
+      <UniqueIdentifier>{02e255ff-c4a5-4645-b7f7-8f9d3f036557}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseApp.cpp">
@@ -32,6 +35,24 @@
     </ClCompile>
     <ClCompile Include="Actor.cpp">
       <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\IMGUI\imgui.cpp">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\IMGUI\imgui_demo.cpp">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\IMGUI\imgui_draw.cpp">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\IMGUI\imgui_tables.cpp">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\IMGUI\imgui_widgets.cpp">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\IMGUI\imgui-SFML.cpp">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +91,36 @@
     </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IMGUI\imconfig.h">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IMGUI\imconfig-SFML.h">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IMGUI\imgui.h">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IMGUI\imgui_impl_opengl3_loader.h">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IMGUI\imgui_internal.h">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IMGUI\imgui-SFML.h">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IMGUI\imgui-SFML_export.h">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IMGUI\imstb_rectpack.h">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IMGUI\imstb_textedit.h">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IMGUI\imstb_truetype.h">
+      <Filter>Archivos de encabezado\IMGUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

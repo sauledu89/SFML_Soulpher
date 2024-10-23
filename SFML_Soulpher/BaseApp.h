@@ -1,87 +1,95 @@
-#pragma once  
-
-#include "Prerequisites.h"  
-#include "Window.h"         
-#include "Actor.h"          
+#pragma once
+#include "Prerequisites.h"  // Importa las dependencias necesarias.
+#include "Window.h"         // Maneja la ventana principal donde se renderiza el contenido.
+#include "ShapeFactory.h"   // Provee utilidades para crear formas geométricas.
+#include "Actor.h"          // Define los actores que se dibujarán en pantalla.
 
 /*
-  Clase BaseApp
-  - Actúa como la clase principal que controla la ejecución del programa.
-  - Gestiona la creación de la ventana, la inicialización de los actores y el ciclo de vida de la aplicación.
-  En el contexto de gráficas computacionales 3D, esta clase podría ser extendida para incluir sistemas de cámaras,
-  gestión de escenas 3D, y otras funcionalidades avanzadas como sistemas de partículas y control de física.
- */
-class BaseApp
-{
+  Clase principal que controla el flujo de la aplicación.
+  Esta clase gestiona la ventana, los actores (como el triángulo, círculo y pista),
+  y contiene la lógica para la actualización, renderizado, movimiento y liberación de recursos.
+*/
+class BaseApp {
 public:
     /*
       Constructor por defecto.
-     */
+       No realiza ninguna inicialización adicional en este caso.
+    */
     BaseApp() = default;
 
     /*
-      Destructor por defecto
-     */
+      Destructor por defecto.
+      No se realizan liberaciones manuales, ya que se usan punteros inteligentes.
+    */
     ~BaseApp() = default;
 
-    /*
-      Función run:
-      - Ciclo principal del programa.
-      - Coordina la ejecución de la aplicación, gestionando la lógica, eventos y renderizado en cada ciclo.
-      Explicada en códigos anteriores.
-     */
+    /* 
+       Ejecuta la aplicación desde la función principal.
+       Llama a las funciones de inicialización, actualización por frame, renderizado
+       y liberación de recursos al final de la ejecución.
+    */
     int run();
 
     /*
-      Función initialize:
-      - Realiza la inicialización de la ventana y actores.
-      Explicada en códigos como BaseApp
-     */
+      Inicializa los recursos necesarios para la aplicación.
+      Crea la ventana principal y los actores, estableciendo sus posiciones iniciales.
+      true Si la inicialización fue exitosa, false en caso de error.
+    */
     bool initialize();
 
     /*
-      Función update:
-
-      - Lógica de actualización de la aplicación en cada frame.
-      Explicada en códigos BaseApp
-     */
+      Actualiza la lógica de la aplicación en cada frame.
+      Se encarga de gestionar el movimiento de los actores, el seguimiento del ratón,
+      y cualquier otra actualización requerida por frame.
+    */
     void update();
 
     /*
-      Función render:
-      - Renderiza los actores en la ventana y muestra el estado actual de la escena.
-      Explicada en códigos como BaseApp
-     */
+       Renderiza los actores en la ventana.
+       Dibuja los actores en la pantalla en cada frame después de la actualización.
+    */
     void render();
 
     /*
-      Función cleanup:
-      - Libera los recursos utilizados por la aplicación y destruye la ventana.
-      Explicada en códigos como BaseApp
-     */
+       Libera los recursos utilizados por la aplicación.
+       Se encarga de limpiar la memoria y liberar los recursos al cerrar la aplicación.
+    */
     void cleanup();
 
+    /*
+       Actualiza el movimiento del círculo entre waypoints.
+       Si el ratón no está cerca, el círculo regresa a la ruta entre waypoints.
+       deltaTime = Tiempo entre frames utilizado para calcular el movimiento.
+          circle = Puntero inteligente al actor del círculo.
+    */
+    void updateMovement(float deltaTime, EngineUtilities::TSharedPointer<Actor> circle);
+
 private:
-    Window* m_window;  // Puntero a la ventana de la aplicación.
+    Window* m_window;  // Puntero a la ventana principal de la aplicación.
 
-    /*
-      Actores gráficos en la escena:
-      Circle y Triangle son punteros inteligentes que representan formas básicas en la ventana.
-      En un contexto de gráficas 3D, estos actores podrían ser reemplazados por modelos tridimensionales
-      con geometrías más complejas (como personajes o elementos del entorno).
-     */
-    EngineUtilities::TSharedPointer<Actor> Triangle;  // Actor de tipo triángulo.
-    EngineUtilities::TSharedPointer<Actor> Circle;  // Actor de tipo círculo.
+    EngineUtilities::TSharedPointer<Actor> Triangle;  // Actor que representa el triángulo.
+    EngineUtilities::TSharedPointer<Actor> Circle;    // Actor que representa el círculo.
+    EngineUtilities::TSharedPointer<Actor> Track;     // Actor que representa la pista.
 
-    sf::Clock Clock;  // Reloj para medir el tiempo de cada frame.
+    // Actores para las cabezas de los personajes.
+    EngineUtilities::TSharedPointer<Actor> MarioHead;
 
-    /*
-      Variable deltaTime:
-      - Representa el tiempo transcurrido entre un frame y otro.
-      - Utilizada para regular las velocidades de movimiento de los actores, asegurando un comportamiento
-        coherente independientemente del hardware en el que se ejecute la aplicación.
-      En gráficas 3D, deltaTime es crucial para simular la física de los objetos (gravedad, colisiones) y calcular
-      el tiempo que tarda un objeto en trasladarse de un punto a otro en un espacio tridimensional.
-     */
-    sf::Time deltaTime; 
+    // Texturas necesarias.
+    sf::Texture texture;    // Textura para la pista.
+    sf::Texture Mario;      // Textura para Mario.
+
+
+    int currentWaypoint = 0;        // Índice del waypoint actual en la trayectoria del círculo.
+    bool isFollowingMouse = false;  //Indica si el círculo está siguiendo al ratón.
+
+    /* 
+       Lista de waypoints.
+       Ruta desde la línea de salida
+       Cada waypoint es un Vector 2d que representa una posición en la ventana.
+    */
+    std::vector<sf::Vector2f> waypoints = {
+        {720.0f, 350.0f}, {720.0f, 260.0f}, {125.0f, 50.0f},
+        {70.0f, 120.0f}, {70.0f, 450.0f}, {400.0f, 350.0f},
+        {550.0f, 500.0f}, {650.0f, 550.0f}, {720.0f, 450.0f}
+    };
 };

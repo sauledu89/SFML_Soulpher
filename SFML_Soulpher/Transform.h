@@ -1,44 +1,91 @@
 #pragma once
 #include "Prerequisites.h"
-#include "Window.h"
 #include "Component.h"
+#include "Window.h"
 
-// Clase que maneja la transformación (posición, rotación y escala) de un actor en la escena
+/*
+   Transform.h
+   Esta clase gestiona las transformaciones básicas de un actor en la escena, incluyendo su posición,
+   rotación y escala. Estas propiedades definen cómo se representa y transforma el actor en el mundo 2D.
+*/
 class Transform : public Component
 {
 public:
-    // Constructor por defecto
+    // Constructor por defecto que inicializa la posición, rotación y escala a valores por defecto.
     Transform()
-        : m_position(0.0f, 0.0f), m_rotation(0.0f), m_scale(1.0f, 1.0f), Component(ComponentType::TRANSFORM) {}
+        : position(0.0f, 0.0f), rotation(0.0f), scale(1.0f, 1.0f), Component(ComponentType::TRANSFORM) {}
 
-    // Constructor con parámetros para inicializar la transformación
+    // Constructor con parámetros que permite inicializar las propiedades de transformación.
     Transform(const sf::Vector2f& position, float rotation = 0.0f, const sf::Vector2f& scale = sf::Vector2f(1.0f, 1.0f))
-        : m_position(position), m_rotation(rotation), m_scale(scale), Component(ComponentType::TRANSFORM) {}
+        : position(position), rotation(rotation), scale(scale), Component(ComponentType::TRANSFORM) {}
 
-    // Destructor por defecto
+    // Destructor por defecto. No requiere liberación de recursos especiales.
     virtual ~Transform() = default;
 
-    // Método de actualización de la transformación (no se necesita lógica adicional aquí)
+    // Actualiza el estado del componente (no hace nada en esta implementación).
     void update(float deltaTime) override {}
 
-    // Método de renderizado (sin implementación porque Transform no se dibuja)
+    // Renderiza el componente (no aplicable para Transform).
     void render(Window& window) override {}
 
-    // Setters y Getters para modificar la posición, rotación y escala
-    void setPosition(float x, float y) { m_position = sf::Vector2f(x, y); }
-    void setPosition(const sf::Vector2f& position) { m_position = position; }
+    // Establece la posición del actor.
+    void setPosition(const sf::Vector2f& newPosition) {
+        position = newPosition;
+    }
 
-    void setRotation(float rotation) { m_rotation = rotation; }
+    // Establece la rotación del actor.
+    void setRotation(float newRotation) {
+        rotation = newRotation;
+    }
 
-    void setScale(float scaleX, float scaleY) { m_scale = sf::Vector2f(scaleX, scaleY); }
-    void setScale(const sf::Vector2f& scale) { m_scale = scale; }
+    // Establece la escala del actor.
+    void setScale(const sf::Vector2f& newScale) {
+        scale = newScale;
+    }
 
-    sf::Vector2f getPosition() const { return m_position; }
-    float getRotation() const { return m_rotation; }
-    sf::Vector2f getScale() const { return m_scale; }
+    // Devuelve la posición actual del actor.
+    sf::Vector2f& getPosition() {
+        return position;
+    }
+
+    // Devuelve la rotación actual del actor.
+    float getRotation() const {
+        return rotation;
+    }
+
+    // Devuelve la escala actual del actor.
+    sf::Vector2f& getScale() {
+        return scale;
+    }
+
+    /*
+       Para mover la entidad hacia un objetivo con una velocidad específica.
+        - targetPosition = La posición objetivo hacia la que se moverá.
+        - speed = La velocidad a la que se moverá la entidad.
+        - deltaTime = tiempo transcurrido entre frames para un movimiento suave.
+        - range = La distancia mínima antes de detener el movimiento.
+    */
+    void Seek(const sf::Vector2f& targetPosition, float speed, float deltaTime, float range) {
+        // Calcular dirección hacia el objetivo.
+        sf::Vector2f direction = targetPosition - position;
+
+        // Calcular distancia al objetivo.
+        float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+        // Si estamos dentro del rango, no realizamos más movimiento.
+        if (distance < range) return;
+
+        // Normalizamos la dirección.
+        if (distance > 0.0f) {
+            direction /= distance;
+        }
+
+        // Actualizar la posición según dirección, velocidad y deltaTime.
+        position += direction * speed * deltaTime;
+    }
 
 private:
-    sf::Vector2f m_position;  // Almacena la posición de la entidad en el mundo
-    float m_rotation;         // Almacena la rotación de la entidad en grados
-    sf::Vector2f m_scale;     // Almacena la escala de la entidad (X, Y)
+    sf::Vector2f position;  // Posición del actor.
+    float rotation;         // Rotación del actor en grados.
+    sf::Vector2f scale;     // Escala del actor en los ejes X e Y.
 };

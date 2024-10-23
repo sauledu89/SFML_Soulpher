@@ -1,152 +1,116 @@
 #include "ShapeFactory.h"
 
 /*
-  Función createShape
-  - Crea y devuelve una nueva forma (sf::Shape) basada en el tipo de ShapeType proporcionado.
-  - Almacena la forma en el miembro m_shape para su posterior manipulación y renderizado.
-  En el contexto de gráficos 3D, esta función podría extenderse para crear diferentes tipos de geometrías tridimensionales
-  como cubos, esferas o modelos personalizados, utilizando clases como sf::Mesh o contextos OpenGL para almacenar
-  los vértices y las propiedades de cada objeto.
- */
-sf::Shape* ShapeFactory::createShape(ShapeType shapeType)
-{
-    m_shapeType = shapeType;  // Almacena el tipo de forma actual.
+   Implementación del constructor parametrizado.
+   Inicializa con un tipo específico de forma.
+*/
+ShapeFactory::ShapeFactory(ShapeType shapeType)
+    : m_shape(nullptr), m_shapeType(shapeType), Component(ComponentType::SHAPE) {}
 
-    switch (shapeType)
-    {
-    case EMPTY:
-    {
-        // Si el tipo de forma es EMPTY, no se crea ninguna forma.
+/* 
+   Crea una nueva forma geométrica según el tipo indicado en shapeType
+   Asigna la forma creada al puntero `m_shape` y devuelve un puntero a la forma.
+   return -> Puntero a la forma creada  en `sf::Shape*`.
+*/
+sf::Shape* ShapeFactory::createShape(ShapeType shapeType) {
+    m_shapeType = shapeType;
+
+    switch (shapeType) {
+    case ShapeType::EMPTY:
         return nullptr;
-    }
 
-    case CIRCLE:
-    {
-        // Creación del círculo, radio de 10 unidades.
-        sf::CircleShape* circle = new sf::CircleShape(10.0f);
-        circle->setFillColor(sf::Color::White);  // Color de relleno predeterminado.
-        m_shape = circle;  // Almacena la referencia de la forma creada en `m_shape`.
+    case ShapeType::CIRCLE: {
+        sf::CircleShape* circle = new sf::CircleShape(15.0f); // CircleShape(15.0f) -> Tamaño de los personajes 
+        // circle->setFillColor(sf::Color::White); <- Para cuando el círculo era de color sólido
+        m_shape = circle;
         return circle;
     }
 
-    case RECTANGLE:
-    {
-        // Crea un rectángulo con dimensiones 100x50.
-        sf::RectangleShape* rectangle = new sf::RectangleShape(sf::Vector2(100.0f, 50.0f));
-        rectangle->setFillColor(sf::Color::White);  // Color de relleno predeterminado.
-        m_shape = rectangle;  // Almacena la referencia de la forma creada.
+    case ShapeType::RECTANGLE: {
+        sf::RectangleShape* rectangle = new sf::RectangleShape(sf::Vector2f(100.0f, 50.0f));
+        rectangle->setFillColor(sf::Color::White);
+        m_shape = rectangle;
         return rectangle;
     }
 
-    case TRIANGLE:
-    {
-        // Crea un triángulo equilátero usando `sf::CircleShape` con 3 puntos.
-        sf::CircleShape* triangle = new sf::CircleShape(50.0f, 3);  // Radio y número de lados.
-        triangle->setFillColor(sf::Color::White);  // Color de relleno predeterminado.
-        m_shape = triangle;  // Almacena la referencia de la forma creada.
+    case ShapeType::TRIANGLE: {
+        sf::CircleShape* triangle = new sf::CircleShape(50.0f, 3);  // Triángulo con 3 puntos.
+        triangle->setFillColor(sf::Color::White);
+        m_shape = triangle;
         return triangle;
     }
 
     default:
-        return nullptr;  // En caso de un tipo de forma desconocido, retornar nullptr.
+        return nullptr;
+    }
+}
+
+/* 
+   Actualiza el estado de la forma.
+   Este método se ejecuta en cada frame para realizar cambios dinámicos si es necesario.
+*/
+void ShapeFactory::update(float deltaTime) {
+    // Implementación futura: Añadir lógica de actualización si es necesario.
+}
+
+   // Renderiza la forma en la ventana proporcionada.
+void ShapeFactory::render(Window& window) {
+    if (m_shape != nullptr) {
+        window.draw(*m_shape);  // Dibuja la forma en la ventana.
+    }
+}
+
+//Establece la posición de la forma con coordenadas X & Y.
+void ShapeFactory::setPosition(float x, float y) {
+    if (m_shape != nullptr) {
+        m_shape->setPosition(x, y);
     }
 }
 
 /*
-  Función setPosition
-  - Establece la posición de la forma utilizando coordenadas float (x, y).
-  La función setPosition permite posicionar la forma en un punto específico del espacio 2D.
-  En gráficos 3D, se utilizarían coordenadas 3D (x, y, z) para definir la posición del modelo en el espacio tridimensional.
- */
-void ShapeFactory::setPosition(float x, float y)
-{
-    m_shape->setPosition(x, y);  // Establecer la posición usando coordenadas flotantes.
+   Se Establece la posición de la forma con un vector 2D.
+   position Un vector con las coordenadas X & Y.
+*/
+void ShapeFactory::setPosition(const sf::Vector2f& position) {
+    if (m_shape != nullptr) {
+        m_shape->setPosition(position);
+    }
 }
-
 
 /*
-  Sobrecarga de setPosition que acepta un vector `sf::Vector2f`.
-  - Permite establecer la posición de la forma utilizando un vector en lugar de coordenadas individuales.
-  En un entorno 3D, se utilizaría un vector `Vector3f` para definir la posición en tres dimensiones.
- */
-void ShapeFactory::setPosition(const sf::Vector2f& position)
-{
-    m_shape->setPosition(position);  // Establecer la posición usando un vector.
+   Cambia el color de la forma.
+   color El nuevo color a aplicar.
+*/
+void ShapeFactory::setFillColor(const sf::Color& color) {
+    if (m_shape != nullptr) {
+        m_shape->setFillColor(color);
+    }
 }
 
-// Establece la rotación de la forma.
-// @param angle Ángulo de rotación en grados.
-void ShapeFactory::setRotation(float angle)
-{
-    if (m_shape)
-    {
+/*
+   Establece la rotación de la forma en grados.
+   angle Ángulo de rotación.
+*/
+void ShapeFactory::setRotation(float angle) {
+    if (m_shape != nullptr) {
         m_shape->setRotation(angle);
     }
 }
 
-// Establece la escala de la forma usando un vector 2D (X e Y).
-// @param scl Vector que contiene la escala para los ejes X e Y.
-void ShapeFactory::setScale(const sf::Vector2f& scl)
-{
-    if (m_shape)
-    {
+/*
+   Establece la escala de la forma en los ejes X e Y.
+   scl Vector con los valores de escala.
+*/
+void ShapeFactory::setScale(const sf::Vector2f& scl) {
+    if (m_shape != nullptr) {
         m_shape->setScale(scl);
     }
 }
-/*
-  Función setFillColor
-  - Cambia el color de relleno de la forma.
-  En gráficos 3D, esta función podría estar asociada a la manipulación de materiales y shaders que
-  determinan el color, textura y apariencia de un objeto tridimensional.
- */
-void ShapeFactory::setFillColor(const sf::Color& color)
-{
-    m_shape->setFillColor(color);  // Establecer el color de relleno de la forma.
-}
 
 /*
-  Función Seek
-  - Mueve la forma hacia una posición objetivo a una velocidad determinada.
-  Esta es una implementación de un comportamiento de "persecución" en gráficos 2D.
-  En un entorno 3D, el cálculo de dirección y distancia se realizaría usando vectores 3D, y la forma se movería
-  en el espacio tridimensional hacia la posición deseada.
- */
-void ShapeFactory::Seek(const sf::Vector2f& targetPosition, float speed, float deltaTime, float range)
-{
-    sf::Vector2f shapePosition = m_shape->getPosition();  // Obtener la posición actual de la forma.
-
-    sf::Vector2f direction = targetPosition - shapePosition;  // Calcular la dirección hacia el objetivo.
-
-    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);  // Calcular la distancia.
-
-    if (length > range)  // Si la distancia es mayor que el rango definido...
-    {
-        direction /= length;  // Normalizar el vector de dirección.
-        m_shape->move(direction * speed * deltaTime);  // Mover la forma hacia el objetivo.
-    }
-}
-
-/*
-  Función update
-  - Actualiza el estado del componente en cada ciclo de la aplicación.
-  En gráficos 3D, se podría utilizar para aplicar transformaciones, animaciones o cambios de estado
-  en los modelos tridimensionales.
- */
-void ShapeFactory::update(float deltaTime)
-{
-  
-}
-
-/*
-  Función render
-  - Renderiza la forma en la ventana proporcionada.
-  En un entorno 3D, esta función se encargaría de enviar las geometrías y materiales a la GPU para
-  que sean dibujados en pantalla usando técnicas como sombreado y texturizado.
- */
-void ShapeFactory::render(Window& window)
-{
-    if (m_shape != nullptr)  // Si la forma no es nula...
-    {
-        window.draw(*m_shape);  // Dibujar la forma en la ventana.
-    }
+   Devuelve un puntero a la forma creada.
+   Return -> Puntero a la forma : `sf::Shape*`.
+*/
+sf::Shape* ShapeFactory::getShape() {
+    return m_shape;
 }

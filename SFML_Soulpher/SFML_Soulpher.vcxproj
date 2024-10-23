@@ -105,7 +105,8 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Users\chalu\OneDrive\Documentos\GitHub\SFML_Soulpher\ThirdParties\SFML-2.6.1-windows-vc17-64-bit\SFML-2.6.1\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;%(AdditionalDependencies) </AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;opengl32.lib
+;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -126,7 +127,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Users\chalu\OneDrive\Documentos\GitHub\SFML_Soulpher\ThirdParties\SFML-2.6.1-windows-vc17-64-bit\SFML-2.6.1\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;%(AdditionalDependencies) </AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;opengl32.lib
+;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -144,7 +146,8 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Users\chalu\OneDrive\Documentos\GitHub\SFML_Soulpher\ThirdParties\SFML-2.6.1-windows-vc17-64-bit\SFML-2.6.1\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;%(AdditionalDependencies) </AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;opengl32.lib
+;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -165,10 +168,17 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Users\chalu\OneDrive\Documentos\GitHub\SFML_Soulpher\ThirdParties\SFML-2.6.1-windows-vc17-64-bit\SFML-2.6.1\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;%(AdditionalDependencies) </AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;opengl32.lib
+;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Include\IMGUI\imgui-SFML.cpp" />
+    <ClCompile Include="..\Include\IMGUI\imgui.cpp" />
+    <ClCompile Include="..\Include\IMGUI\imgui_demo.cpp" />
+    <ClCompile Include="..\Include\IMGUI\imgui_draw.cpp" />
+    <ClCompile Include="..\Include\IMGUI\imgui_tables.cpp" />
+    <ClCompile Include="..\Include\IMGUI\imgui_widgets.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="BaseApp.cpp" />
     <ClCompile Include="main.cpp" />
@@ -176,6 +186,16 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Include\IMGUI\imconfig-SFML.h" />
+    <ClInclude Include="..\Include\IMGUI\imconfig.h" />
+    <ClInclude Include="..\Include\IMGUI\imgui-SFML.h" />
+    <ClInclude Include="..\Include\IMGUI\imgui-SFML_export.h" />
+    <ClInclude Include="..\Include\IMGUI\imgui.h" />
+    <ClInclude Include="..\Include\IMGUI\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="..\Include\IMGUI\imgui_internal.h" />
+    <ClInclude Include="..\Include\IMGUI\imstb_rectpack.h" />
+    <ClInclude Include="..\Include\IMGUI\imstb_textedit.h" />
+    <ClInclude Include="..\Include\IMGUI\imstb_truetype.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="BaseApp.h" />
     <ClInclude Include="Component.h" />
